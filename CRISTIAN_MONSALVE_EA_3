@@ -1,0 +1,129 @@
+try:
+    import datetime
+    fecha_hoy = datetime.date.today()
+
+    def comprar_entradas():
+        print("\n-----------------------------------------")
+        print("Ud ingreso al sistema de ventas de entradas")
+        print("-----------------------------------------")
+        
+        while True:
+            opcion_entradas = int(input("Ingrese cuantas entradas desea comprar:--> "))
+            if opcion_entradas in (1, 2):
+                for i in range(opcion_entradas):
+                    print(f"\n**** Ud ha elegido comprar {'una' if opcion_entradas == 1 else 'dos'} entrada(s) ****")
+                    print("\n---- Ubicaciones ----\n")
+                    print("Asientos del 1 al 20 VIP, valor $100.000 ")
+                    print("Asientos del 21 al 30 Normal, valor $50.000 ")
+                    print("Asientos del 31 al 50 Económico, valor $10.000 ")
+
+                    ubicacion = int(input("\nElija su ubicación:--> "))
+                if ubicacion in range(1, 51):
+                    if ubicacion <= 20:
+                        tipo_asiento = "VIP"
+                        precio_asiento = 100000
+                    elif ubicacion <= 30:
+                        tipo_asiento = "Normal"
+                        precio_asiento = 50000
+                    else:
+                        tipo_asiento = "Económico"
+                        precio_asiento = 10000
+
+                    # Marcando asiento como comprado en la matriz del escenario
+                    fila = (ubicacion - 1) // 5
+                    columna = (ubicacion - 1) % 5
+                    escenario[fila][columna] = 'X'
+                    # Agregando información de la compra al diccionario
+                    rut = input("Ingrese su RUT:--> ")
+                if rut in asientos_comprados:
+                    asientos_comprados[rut].append((ubicacion, precio_asiento))
+                    print("-------------------------------------------------------------------")
+                    print(f"La operacion se ha realizado correctamente, Ud ha comprado un asiento {tipo_asiento} en la ubicación {ubicacion}.")
+                    print("-------------------------------------------------------------------")
+                    # Verificamos si el RUT ya ha comprado 2 entradas
+                    if rut in asientos_comprados and len(asientos_comprados[rut]) >= 2:
+                        print("---------------------------------------------------------------")
+                        print("Ya ha comprado el máximo de 2 entradas.")
+                        print("---------------------------------------------------------------")
+                        break   
+                else:
+                    asientos_comprados[rut] = [(ubicacion, precio_asiento)]
+                    print("-------------------------------------------------------------------")
+                    print(f"La operacion se ha realizado correctamente, ud ha comprado un asiento {tipo_asiento} en la ubicación {ubicacion}.")
+                    print("-------------------------------------------------------------------")
+                    break
+                
+            else:
+                print("Opción no válida...")
+    
+    def ubicaciones_disponibles():
+        print("Asientos disponibles:")
+        for i in range(10):
+            for j in range(5):
+                num_asiento = i * 5 + j + 1
+                if escenario[i][j] == 'O':
+                    print(num_asiento, end=" ") # Asiento disponible
+                else:
+                    print("X", end=" ") # Asiento ocupado
+            print()  # Nueva línea para cada fila de asientos
+    
+    #funcion para ver los asistentes al concierto por rut
+    def rut_asistentes():
+        print("Listado de los rut asistentes al concierto:")
+        for rut, entradas in asientos_comprados.items():
+            cantidad_entradas = len(entradas)
+            for _ in range(cantidad_entradas):
+                print("-------------------------------")
+                print(rut)
+                print("-------------------------------")
+
+    #funcion para ver las ganancias totales
+    def total_ganancias():
+        total_ganancias = sum(sum(precio for _, precio in entradas) for entradas in asientos_comprados.values())
+        print("--------------------------------------")
+        print(f"Ganancias totales: ${total_ganancias}")
+        print("--------------------------------------")
+
+    #funcion para salir
+    def salir():
+        print("------------------------------------------------------------------------")
+        print(f"Ud ha salido del sistema, Atte Cristian Monsalve con fecha {fecha_hoy}")
+        print("------------------------------------------------------------------------")
+  
+    # Matriz escenario 10x5
+    escenario = [['O' for _ in range(5)] for _ in range(10)] 
+    # Diccionario para almacenar la información de los asientos comprados
+    asientos_comprados = {} 
+    while True:
+        print("\n******************************************")
+        print("*    Bienvenido al sistema de pagos DM   *")
+        print("******************************************")
+        print("\n--------   Menu    --------\n")
+        print(" 1) comprar  entradas")
+        print(" 2) ubicaciones disponibles")
+        print(" 3) listado de asistentes por rut")
+        print(" 4) ver ganancias totales")
+        print(" 5) salir\n")
+
+        opcion = int(input("Ingrese una opción válida:--> "))
+        match opcion:
+            case 1:
+                comprar_entradas = comprar_entradas()
+                    
+            case 2:
+                ubicaciones_disponibles()
+                    
+            case 3:  
+                rut_asistentes()
+                
+            case 4:
+                total_ganancias()
+                
+            case 5:
+                salir()
+                break
+            case _:
+                print("Opción ingresada no válida...!")
+        
+except Exception as e:
+    print("Error:", e)
